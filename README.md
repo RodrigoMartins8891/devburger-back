@@ -28,6 +28,6 @@ API REST desenvolvida em Node.js para gerenciamento de pedidos de uma hamburguer
 
 ## 🔧 Instalação
 ```bash
-git clone https://github.com/seu-usuario/devburger-back
+git clone https://github.com/RodrigoMartins8891/devburger-back
 cd devburger-back
 npm install
