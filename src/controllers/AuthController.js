@@ -27,10 +27,16 @@ export class AuthController {
         }
 
         const token = jwt.sign(
-            { id: usuario.id, email: usuario.email },
-            'CHAVE_SECRETA',
+            {
+                id: usuario.id,
+                email: usuario.email,
+                is_admin: usuario.is_admin
+            },
+            process.env.JWT_SECRET,
             { expiresIn: '8h' }
         );
+
+
 
         return res.json({ token });
 
@@ -58,10 +64,15 @@ export class AuthController {
         );
 
         const token = jwt.sign(
-            { id: result.insertId, email },
-            'CHAVE_SECRETA',
+            {
+                id: usuario.id,
+                email: usuario.email,
+                is_admin: usuario.is_admin
+            },
+            process.env.JWT_SECRET,
             { expiresIn: '8h' }
         );
+
 
         return res.status(201).json({
             id: result.insertId,

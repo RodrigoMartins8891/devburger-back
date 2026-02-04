@@ -52,7 +52,32 @@ router.post('/register', async (req, res) => {
         });
     }
 });
-
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login do usuário
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *       401:
+ *         description: Credenciais inválidas
+ */
 /* =========================
     LOGIN
 ========================= */

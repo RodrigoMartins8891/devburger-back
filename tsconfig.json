@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "checkJs": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -29,6 +32,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/orders/orders.controller.js", "src/orders/orders.gateway.ts", "src/orders/orders.module.ts", "src/orders/orders.service.ts"  ],
   "exclude": ["node_modules"]
 }

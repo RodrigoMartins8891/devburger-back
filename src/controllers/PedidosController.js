@@ -1,5 +1,4 @@
 // src/controllers/PedidosController.js
-
 import { pool } from '../config/database.js';
 import { ProdutosRepository } from '../repositories/ProdutosRepository.js';
 
@@ -8,6 +7,11 @@ const repoProdutos = new ProdutosRepository();
 export class PedidosController {
 
     async criar(req, res) {
+
+        console.log('🔥 PEDIDO CHEGOU DO FRONT');
+        console.log('Usuário:', req.usuario.id);
+        console.log('Itens:', req.body.itens);
+
 
         try {
 

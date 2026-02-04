@@ -4,6 +4,9 @@ import express from 'express';
 import { PedidosController } from '../controllers/PedidosController.js';
 import { auth } from '../middlewares/auth.js';
 import { pool } from '../config/database.js';
+import { io } from '../../server.js';
+import { isAdmin } from '../middlewares/isAdmin.js';
+
 
 const router = express.Router();
 const controller = new PedidosController();
@@ -94,7 +97,7 @@ router.get('/:id/historico', auth, async (req, res) => {
 
 
 // Alterar status do pedido (rota protegida)
-router.patch('/:id/status', auth, async (req, res) => {
+router.patch('/:id/status', auth, isAdmin, async (req, res) => {
     try {
         const { status } = req.body;
         const pedidoId = req.params.id;
@@ -110,7 +113,7 @@ router.patch('/:id/status', auth, async (req, res) => {
             return res.status(400).json({ erro: 'status inválido' });
         }
 
-        // Atualiza status atual do pedido
+        // Atualiza status
         await pool.query(
             'UPDATE pedidos SET status = ? WHERE id = ?',
             [status, pedidoId]
@@ -122,6 +125,19 @@ router.patch('/:id/status', auth, async (req, res) => {
             [pedidoId, status]
         );
 
+        // 🔥 BUSCA O PEDIDO ATUALIZADO
+        const [rows] = await pool.query(
+            'SELECT * FROM pedidos WHERE id = ?',
+            [pedidoId]
+        );
+
+        const pedidoAtualizado = rows[0];
+
+        // 🔥 EMITE EVENTO EM TEMPO REAL
+        console.log('🔥 EMITINDO EVENTO pedido-status-atualizado', pedidoAtualizado);
+        
+        io.emit('pedido-status-atualizado', pedidoAtualizado);
+
         return res.json({
             pedidoId,
             novo_status: status
@@ -132,6 +148,30 @@ router.patch('/:id/status', auth, async (req, res) => {
         return res.status(500).json({ erro: 'erro ao atualizar status' });
     }
 });
+
+// LISTAR TODOS OS PEDIDOS (ADMIN)
+router.get('/admin/todos', auth, isAdmin, async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                p.id,
+                p.usuario_id,
+                u.nome AS usuario_nome,
+                p.status,
+                p.total,
+                p.criado_em
+            FROM pedidos p
+            JOIN usuarios u ON u.id = p.usuario_id
+            ORDER BY p.criado_em DESC
+        `);
+
+        return res.json(rows);
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ erro: 'erro ao listar pedidos admin' });
+    }
+});
+
 
 
 export default router;
